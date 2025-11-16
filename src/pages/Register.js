@@ -9,6 +9,7 @@ function Register() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [isTeacher, setIsTeacher] = useState(false);
   const [loading, setLoading] = useState(false);
   const { signup } = useAuth();
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ function Register() {
     try {
       setError('');
       setLoading(true);
-      await signup(email, password, name);
+      await signup(email, password, name, isTeacher ? 'teacher' : 'student');
       navigate('/dashboard');
     } catch (err) {
       setError('Falha ao criar conta. ' + err.message);
@@ -37,8 +38,8 @@ function Register() {
     <div className="auth-container">
       <div className="auth-card">
         <div className="auth-header">
-          <h1>MathWizards</h1>
-          <p>Crie sua conta para começar a aventura!</p>
+          <h1>English Kids</h1>
+          <p>Crie sua conta para aprender inglês!</p>
         </div>
         
         {error && <div className="auth-error">{error}</div>}
@@ -77,16 +78,27 @@ function Register() {
             />
           </div>
           
-          <div className="form-group">
-            <label htmlFor="confirmPassword">Confirmar Senha</label>
-            <input 
-              type="password" 
-              id="confirmPassword"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required 
-            />
-          </div>
+        <div className="form-group">
+          <label htmlFor="confirmPassword">Confirmar Senha</label>
+          <input 
+            type="password" 
+            id="confirmPassword"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required 
+          />
+        </div>
+
+        <div className="form-group">
+          <label>
+            <input
+              type="checkbox"
+              checked={isTeacher}
+              onChange={(e) => setIsTeacher(e.target.checked)}
+            />{' '}
+            Sou Professor
+          </label>
+        </div>
           
           <button 
             type="submit" 

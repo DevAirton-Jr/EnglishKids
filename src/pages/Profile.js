@@ -2,28 +2,19 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import '../styles/Profile.css';
 
-// Avatares importados
-import lucca from '../assets/avatars/lucca.png';
-import alt from '../assets/avatars/alt.png';
-import billy from '../assets/avatars/billy.png';
-import bryan from '../assets/avatars/bryan.png';
-import jenna from '../assets/avatars/jenna.png';
-import lucia from '../assets/avatars/lucia.png';
-import maryah from '../assets/avatars/maryah.png';
-import sidney from '../assets/avatars/sidney.png';
-import merlyn from '../assets/avatars/merlyn.png';
+function loadAvatars() {
+  const ctx = require.context('../assets/avatars', false, /\.(png|jpe?g|gif|svg)$/);
+  const files = ctx.keys();
+  const list = files.map((key) => {
+    const src = ctx(key);
+    const base = key.replace('./', '');
+    const name = base.replace(/\.[^/.]+$/, '');
+    return { name, src };
+  });
+  return list;
+}
 
-const avatars = [
-  { name: 'lucca', src: lucca },
-  { name: 'Alt', src: alt },
-  { name: 'Billy', src: billy },
-  { name: 'Bryan', src: bryan },
-  { name: 'Jenna', src: jenna },
-  { name: 'Lucia', src: lucia },
-  { name: 'Maryah', src: maryah },
-  { name: 'Sidney', src: sidney },
-  { name: 'Merlyn', src: merlyn },
-];
+const avatars = loadAvatars();
 
 export default function Profile() {
   const { userProfile, updateUserProfile, uploadProfilePicture } = useAuth();

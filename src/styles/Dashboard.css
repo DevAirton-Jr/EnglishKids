@@ -145,6 +145,70 @@
   margin-bottom: 8px;
 }
 
+.section-card {
+  background: linear-gradient(145deg, #2b2b3d, #1f1f2e);
+  border-radius: 20px;
+  padding: 25px 20px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.35);
+  color: #f0f0f5;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.input-field {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #555;
+  border-radius: 12px;
+  background-color: #2b2b3d;
+  color: #ffffff;
+}
+
+.teacher-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.teacher-student-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid #444;
+}
+
+.teacher-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.editor-card {
+  background: linear-gradient(145deg, #2b2b3d, #1f1f2e);
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.35);
+}
+
+.editor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.editor-label {
+  color: #ccc;
+  margin-bottom: 6px;
+  display: block;
+  font-weight: 600;
+}
+
 /* ================= Responsividade ================= */
 @media (max-width: 768px) {
   .level-card {

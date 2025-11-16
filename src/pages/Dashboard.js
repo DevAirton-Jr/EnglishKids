@@ -11,16 +11,16 @@ function Dashboard() {
   }, [fetchUserProfile]);
 
   const levels = [
-    { id: 1, title: 'Soma Simples', description: 'Aprenda a somar números pequenos.' },
-    { id: 2, title: 'Subtração Simples', description: 'Aprenda a subtrair valores básicos.' },
-    { id: 3, title: 'Multiplicação Simples', description: 'Multiplique números de 1 a 5.' },
-    { id: 4, title: 'Multiplicação Intermediária', description: 'Pratique multiplicação com números maiores.' },
-    { id: 5, title: 'Divisão Simples', description: 'Divida valores inteiros sem sobras.' },
-    { id: 6, title: 'Soma Avançada', description: 'Adicione números maiores com rapidez.' },
-    { id: 7, title: 'Subtração Avançada', description: 'Treine subtração com valores mais altos.' },
-    { id: 8, title: 'Multiplicação Avançada', description: 'Multiplique grandes números com precisão.' },
-    { id: 9, title: 'Divisão Avançada', description: 'Resolva divisões difíceis (arredondadas).' },
-    { id: 10, title: 'Desafio Final', description: 'Revisão geral com todos os tipos de operação.' },
+    { id: 1, title: 'Cores em Inglês', description: 'Aprenda as cores básicas (Red, Blue, Green...).' },
+    { id: 2, title: 'Números em Inglês', description: 'Aprenda números de 1 a 10 em inglês.' },
+    { id: 3, title: 'Animais em Inglês', description: 'Aprenda nomes de animais comuns em inglês.' },
+    { id: 4, title: 'Itens da Escola', description: 'Aprenda objetos escolares em inglês.' },
+    { id: 5, title: 'Partes do Corpo', description: 'Aprenda partes do corpo em inglês.' },
+    { id: 6, title: 'Dias da Semana', description: 'Aprenda os dias da semana em inglês.' },
+    { id: 7, title: 'Família', description: 'Aprenda membros da família em inglês.' },
+    { id: 8, title: 'Verbo To Be', description: 'Complete frases simples com am/is/are.' },
+    { id: 9, title: 'Pronomes Pessoais', description: 'Aprenda pronomes como I, You, He, She...' },
+    { id: 10, title: 'Frases Simples', description: 'Traduza frases básicas do dia a dia.' },
   ];
 
   const isLevelUnlocked = (levelId) => {

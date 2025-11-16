@@ -13,7 +13,6 @@ function GameLevel() {
   const [score, setScore] = useState(0);
   const [showResult, setShowResult] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
-  const [timeLeft, setTimeLeft] = useState(30);
   const [gameOver, setGameOver] = useState(false);
   const [questions, setQuestions] = useState([]);
 
@@ -22,163 +21,192 @@ function GameLevel() {
     audio.play();
   };
 
-  const generateOptions = (correctAnswer, maxValue) => {
+  const generateOptions = (correctAnswer, pool) => {
     const options = [correctAnswer];
+    const candidates = pool.filter((p) => p !== correctAnswer);
+    while (options.length < 4 && candidates.length) {
+      const idx = Math.floor(Math.random() * candidates.length);
+      const opt = candidates.splice(idx, 1)[0];
+      if (!options.includes(opt)) options.push(opt);
+    }
     while (options.length < 4) {
-      const option = Math.floor(Math.random() * maxValue) + 1;
-      if (!options.includes(option)) options.push(option);
+      options.push(correctAnswer);
     }
     return options.sort(() => Math.random() - 0.5);
   };
 
   const generateQuestions = useCallback(() => {
-    const newQuestions = [];
-    for (let i = 0; i < 5; i++) {
-      let question = {};
-      switch (levelNum) {
-        case 1:
-          question = {
-            text: `Quanto é ${i + 1} + ${i + 2}?`,
-            correctAnswer: (i + 1) + (i + 2),
-            options: generateOptions((i + 1) + (i + 2), 10)
-          };
-          break;
-        case 2:
-          question = {
-            text: `Quanto é ${i + 5} - ${i + 2}?`,
-            correctAnswer: (i + 5) - (i + 2),
-            options: generateOptions((i + 5) - (i + 2), 10)
-          };
-          break;
-        case 3: {
-          const a = i + 1;
-          const b = (i % 5) + 1;
-          question = {
-            text: `Quanto é ${a} × ${b}?`,
-            correctAnswer: a * b,
-            options: generateOptions(a * b, 20)
-          };
-          break;
-        }
-        case 4: {
-          const a = Math.floor(Math.random() * 10) + 5;
-          const b = Math.floor(Math.random() * 10) + 5;
-          question = {
-            text: `Quanto é ${a} × ${b}?`,
-            correctAnswer: a * b,
-            options: generateOptions(a * b, 100)
-          };
-          break;
-        }
-        case 5: {
-          const b = Math.floor(Math.random() * 9) + 2;
-          const correct = (Math.floor(Math.random() * 10) + 1) * b;
-          question = {
-            text: `Quanto é ${correct} ÷ ${b}?`,
-            correctAnswer: correct / b,
-            options: generateOptions(correct / b, 20)
-          };
-          break;
-        }
-        case 6: {
-          const a = Math.floor(Math.random() * 90) + 10;
-          const b = Math.floor(Math.random() * 90) + 10;
-          question = {
-            text: `Quanto é ${a} + ${b}?`,
-            correctAnswer: a + b,
-            options: generateOptions(a + b, 200)
-          };
-          break;
-        }
-        case 7: {
-          const a = Math.floor(Math.random() * 100) + 50;
-          const b = Math.floor(Math.random() * 50) + 10;
-          question = {
-            text: `Quanto é ${a} - ${b}?`,
-            correctAnswer: a - b,
-            options: generateOptions(a - b, 150)
-          };
-          break;
-        }
-        case 8: {
-          const a = Math.floor(Math.random() * 20) + 10;
-          const b = Math.floor(Math.random() * 20) + 10;
-          question = {
-            text: `Quanto é ${a} × ${b}?`,
-            correctAnswer: a * b,
-            options: generateOptions(a * b, 400)
-          };
-          break;
-        }
-        case 9: {
-          const b = Math.floor(Math.random() * 20) + 2;
-          const a = Math.floor(Math.random() * 200) + 20;
-          question = {
-            text: `Quanto é ${a} ÷ ${b}? (arredonde para inteiro)`,
-            correctAnswer: Math.round(a / b),
-            options: generateOptions(Math.round(a / b), 50)
-          };
-          break;
-        }
-        case 10: {
-          const op = Math.floor(Math.random() * 4);
-          let a, b;
-          switch (op) {
-            case 0:
-              a = Math.floor(Math.random() * 100) + 1;
-              b = Math.floor(Math.random() * 100) + 1;
-              question = {
-                text: `Quanto é ${a} + ${b}?`,
-                correctAnswer: a + b,
-                options: generateOptions(a + b, 200)
-              };
-              break;
-            case 1:
-              a = Math.floor(Math.random() * 150) + 50;
-              b = Math.floor(Math.random() * 100) + 10;
-              question = {
-                text: `Quanto é ${a} - ${b}?`,
-                correctAnswer: a - b,
-                options: generateOptions(a - b, 200)
-              };
-              break;
-            case 2:
-              a = Math.floor(Math.random() * 30) + 5;
-              b = Math.floor(Math.random() * 30) + 5;
-              question = {
-                text: `Quanto é ${a} × ${b}?`,
-                correctAnswer: a * b,
-                options: generateOptions(a * b, 600)
-              };
-              break;
-            case 3:
-              b = Math.floor(Math.random() * 20) + 2;
-              a = b * (Math.floor(Math.random() * 20) + 1);
-              question = {
-                text: `Quanto é ${a} ÷ ${b}?`,
-                correctAnswer: a / b,
-                options: generateOptions(a / b, 50)
-              };
-              break;
-            default:
-              question = {
-                text: `Pergunta de nível ${levelNum}`,
-                correctAnswer: 1,
-                options: [1, 2, 3, 4]
-              };
-          }
-          break;
-        }
-        default:
-          question = {
-            text: `Pergunta de nível ${levelNum}`,
-            correctAnswer: 1,
-            options: [1, 2, 3, 4]
-          };
+    const englishData = {
+      1: {
+        type: 'translation',
+        list: [
+          { pt: 'Vermelho', en: 'Red' },
+          { pt: 'Azul', en: 'Blue' },
+          { pt: 'Verde', en: 'Green' },
+          { pt: 'Amarelo', en: 'Yellow' },
+          { pt: 'Preto', en: 'Black' },
+          { pt: 'Branco', en: 'White' },
+          { pt: 'Rosa', en: 'Pink' },
+          { pt: 'Laranja', en: 'Orange' },
+          { pt: 'Roxo', en: 'Purple' },
+          { pt: 'Marrom', en: 'Brown' }
+        ]
+      },
+      2: {
+        type: 'translation',
+        list: [
+          { pt: 'Um', en: 'One' },
+          { pt: 'Dois', en: 'Two' },
+          { pt: 'Três', en: 'Three' },
+          { pt: 'Quatro', en: 'Four' },
+          { pt: 'Cinco', en: 'Five' },
+          { pt: 'Seis', en: 'Six' },
+          { pt: 'Sete', en: 'Seven' },
+          { pt: 'Oito', en: 'Eight' },
+          { pt: 'Nove', en: 'Nine' },
+          { pt: 'Dez', en: 'Ten' }
+        ]
+      },
+      3: {
+        type: 'translation',
+        list: [
+          { pt: 'Cachorro', en: 'Dog' },
+          { pt: 'Gato', en: 'Cat' },
+          { pt: 'Pássaro', en: 'Bird' },
+          { pt: 'Peixe', en: 'Fish' },
+          { pt: 'Cavalo', en: 'Horse' },
+          { pt: 'Vaca', en: 'Cow' },
+          { pt: 'Porco', en: 'Pig' },
+          { pt: 'Coelho', en: 'Rabbit' },
+          { pt: 'Urso', en: 'Bear' },
+          { pt: 'Leão', en: 'Lion' }
+        ]
+      },
+      4: {
+        type: 'translation',
+        list: [
+          { pt: 'Lápis', en: 'Pencil' },
+          { pt: 'Caneta', en: 'Pen' },
+          { pt: 'Caderno', en: 'Notebook' },
+          { pt: 'Livro', en: 'Book' },
+          { pt: 'Mochila', en: 'Backpack' },
+          { pt: 'Borracha', en: 'Eraser' },
+          { pt: 'Régua', en: 'Ruler' },
+          { pt: 'Quadro', en: 'Board' },
+          { pt: 'Mesa', en: 'Table' },
+          { pt: 'Cadeira', en: 'Chair' }
+        ]
+      },
+      5: {
+        type: 'translation',
+        list: [
+          { pt: 'Cabeça', en: 'Head' },
+          { pt: 'Mão', en: 'Hand' },
+          { pt: 'Pé', en: 'Foot' },
+          { pt: 'Braço', en: 'Arm' },
+          { pt: 'Perna', en: 'Leg' },
+          { pt: 'Olho', en: 'Eye' },
+          { pt: 'Boca', en: 'Mouth' },
+          { pt: 'Nariz', en: 'Nose' },
+          { pt: 'Orelha', en: 'Ear' },
+          { pt: 'Dente', en: 'Tooth' }
+        ]
+      },
+      6: {
+        type: 'translation',
+        list: [
+          { pt: 'Segunda-feira', en: 'Monday' },
+          { pt: 'Terça-feira', en: 'Tuesday' },
+          { pt: 'Quarta-feira', en: 'Wednesday' },
+          { pt: 'Quinta-feira', en: 'Thursday' },
+          { pt: 'Sexta-feira', en: 'Friday' },
+          { pt: 'Sábado', en: 'Saturday' },
+          { pt: 'Domingo', en: 'Sunday' }
+        ]
+      },
+      7: {
+        type: 'translation',
+        list: [
+          { pt: 'Mãe', en: 'Mother' },
+          { pt: 'Pai', en: 'Father' },
+          { pt: 'Irmão', en: 'Brother' },
+          { pt: 'Irmã', en: 'Sister' },
+          { pt: 'Avó', en: 'Grandmother' },
+          { pt: 'Avô', en: 'Grandfather' },
+          { pt: 'Filho', en: 'Son' },
+          { pt: 'Filha', en: 'Daughter' },
+          { pt: 'Tio', en: 'Uncle' },
+          { pt: 'Tia', en: 'Aunt' }
+        ]
+      },
+      8: {
+        type: 'sentence',
+        list: [
+          { q: 'Complete: I ___ happy', a: 'am' },
+          { q: 'Complete: You ___ my friend', a: 'are' },
+          { q: 'Complete: He ___ a boy', a: 'is' },
+          { q: 'Complete: She ___ a girl', a: 'is' },
+          { q: 'Complete: We ___ students', a: 'are' },
+          { q: 'Complete: They ___ at home', a: 'are' }
+        ],
+        pool: ['am', 'is', 'are']
+      },
+      9: {
+        type: 'translation',
+        list: [
+          { pt: 'Eu', en: 'I' },
+          { pt: 'Você', en: 'You' },
+          { pt: 'Ele', en: 'He' },
+          { pt: 'Ela', en: 'She' },
+          { pt: 'Nós', en: 'We' },
+          { pt: 'Eles', en: 'They' },
+          { pt: 'Isso', en: 'It' }
+        ]
+      },
+      10: {
+        type: 'translation',
+        list: [
+          { pt: 'Bom dia', en: 'Good morning' },
+          { pt: 'Obrigado', en: 'Thank you' },
+          { pt: 'Por favor', en: 'Please' },
+          { pt: 'Desculpa', en: 'Sorry' },
+          { pt: 'Eu gosto de jogar', en: 'I like to play' },
+          { pt: 'Eu tenho um gato', en: 'I have a cat' },
+          { pt: 'Boa noite', en: 'Good night' },
+          { pt: 'Até logo', en: 'See you later' }
+        ]
       }
-      newQuestions.push(question);
+    };
+
+    const data = englishData[levelNum];
+    if (!data) return [];
+
+    const questions = [];
+    const count = Math.min(5, data.list.length);
+    const used = new Set();
+    while (questions.length < count) {
+      const idx = Math.floor(Math.random() * data.list.length);
+      if (used.has(idx)) continue;
+      used.add(idx);
+      if (data.type === 'translation') {
+        const item = data.list[idx];
+        const pool = data.list.map((x) => x.en);
+        questions.push({
+          text: `Como se diz "${item.pt}" em inglês?`,
+          correctAnswer: item.en,
+          options: generateOptions(item.en, pool)
+        });
+      } else if (data.type === 'sentence') {
+        const item = data.list[idx];
+        const pool = data.pool;
+        questions.push({
+          text: item.q,
+          correctAnswer: item.a,
+          options: generateOptions(item.a, pool)
+        });
+      }
     }
-    return newQuestions;
+    return questions;
   }, [levelNum]);
 
   const handleNextQuestion = useCallback(() => {
@@ -186,7 +214,6 @@ function GameLevel() {
     setSelectedAnswer(null);
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(prev => prev + 1);
-      setTimeLeft(30);
     } else {
       setGameOver(true);
       const passed = score >= Math.ceil(questions.length * 0.6);
@@ -199,7 +226,6 @@ function GameLevel() {
 
   useEffect(() => {
     setQuestions(generateQuestions());
-    setTimeLeft(30);
     setCurrentQuestion(0);
     setScore(0);
     setShowResult(false);
@@ -207,22 +233,7 @@ function GameLevel() {
     setSelectedAnswer(null);
   }, [levelNum, generateQuestions]);
 
-  useEffect(() => {
-    if (gameOver || showResult) return;
-
-    const timer = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          handleNextQuestion();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [currentQuestion, gameOver, showResult, handleNextQuestion]);
+  
 
   const checkAnswer = (selectedOption) => {
     playSound("click");
@@ -238,6 +249,8 @@ function GameLevel() {
     setTimeout(handleNextQuestion, 1500);
   };
 
+  
+
   const restartGame = () => {
     playSound("click");
     setQuestions(generateQuestions());
@@ -246,7 +259,6 @@ function GameLevel() {
     setShowResult(false);
     setGameOver(false);
     setSelectedAnswer(null);
-    setTimeLeft(30);
   };
 
   const handleLogout = async () => {
@@ -268,7 +280,6 @@ function GameLevel() {
   if (!questions.length) return <div>Carregando...</div>;
 
   const currentQ = questions[currentQuestion];
-  const timerPercent = (timeLeft / 30) * 100;
 
   return (
     <div className="game-level">
@@ -280,10 +291,7 @@ function GameLevel() {
 
         <h2 className="level-title">Nível {levelNum}</h2>
 
-        <div className="timer">
-          <div className="timer-bar" style={{ width: `${timerPercent}%` }}></div>
-          <span>{timeLeft}s</span>
-        </div>
+        
 
         {!gameOver ? (
           <div className="question-card">

@@ -192,3 +192,25 @@
     padding: 12px;
   }
 }
+ .role-toggle {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+ }
+ .role-option {
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #555;
+  background: linear-gradient(135deg, #2b2b3d, #1f1f2e);
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s ease;
+ }
+ .role-option.active {
+  border-color: #4c84ff;
+  box-shadow: 0 6px 20px rgba(76,132,255,0.35);
+  background: linear-gradient(135deg, #4c84ff, #6a8cff);
+ }
